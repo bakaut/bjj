@@ -35,8 +35,6 @@ jobs:
 
       - name: Setup SOPS
         uses: nhedger/setup-sops@v2
-        with:
-          version: '3.7.1'
 
       - name: Run the script
         run: |
