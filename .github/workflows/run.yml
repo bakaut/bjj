@@ -41,6 +41,7 @@ jobs:
 
       - name: Run the script
         run: |
+          sops -d secrets/session_name.session > session_name.session
           python upload-convert.py \
             --channel-username ${{ secrets.CHANNEL_USERNAME }} \
             --start-date ${{vars.START_DATE}} \
