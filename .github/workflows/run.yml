@@ -32,6 +32,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
+      
+      - name: Import sops gpg key
+        run: echo -e "${{ secrets.SOPS_KEY }}" | gpg --import
 
       - name: Setup SOPS
         uses: nhedger/setup-sops@v2
