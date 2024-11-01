@@ -32,8 +32,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-      - name: Sops Binary Installer
-        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
         with:
           version: '3.7.1'
 
