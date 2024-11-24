@@ -1,0 +1,50 @@
+name: Save telegram media to S3
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            *processed_messages.db
+          key: ${{ runner.os }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      
+      - name: Import sops gpg key
+        run: echo -e "${{ secrets.SOPS_KEY }}" | gpg --import
+
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
+
+      - name: Run the script
+        run: |
+          sops -d secrets/session > session_name.session
+          python upload-convert.py \
+            --channel-username ${{ secrets.CHANNEL_USERNAME }} \
+            --start-date ${{vars.START_DATE}} \
+            --end-date ${{vars.END_DATE}} \
+            --s3-key-prefix ${{vars.S3_KEY_PREFIX}}
+          python create-index-html.py
